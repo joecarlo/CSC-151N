@@ -11,6 +11,7 @@ class student:
         self.root.title(200 * blank_space + "Student Information System")
         self.root.geometry("1150x475+0+0")
         self.root.config(bg="yellow")
+        self.root.resizable(False, False)
         self.data = dict()
         self.temp = dict()
         self.filename = 'csc.csv'
@@ -41,11 +42,24 @@ class student:
                 if StudentIDNumber.get() == "" or StudentName.get() == "" or YearLevel.get() == "":
                     tkinter.messagebox.showinfo("SIS", "Please Fill In the Box")
                 else:
-                    self.data[StudentIDNumber.get()] = {'Name': StudentName.get(), 'Gender': Gender.get(),
-                                                   'Course': Course.get(),
-                                                   'Year Level': YearLevel.get()}
-                    self.saveData()
-                    tkinter.messagebox.showinfo("SIS", "Student Recorded Successfully")
+                    StudentIDNumber.get()
+                    StudentIDNumber_list = []
+                    for i in StudentIDNumber.get():
+                        StudentIDNumber_list.append(i)
+                    if "-" in StudentIDNumber_list:
+                        x = StudentIDNumber.get().split("-")  
+                        y = x[0]
+                        n = x[1]
+                        if y.isdigit()==False or n.isdigit()==False:
+                            tkinter.messagebox.showerror("Student Information System", "Invalid ID")
+                        else:
+                            self.data[StudentIDNumber.get()] = {'Name': StudentName.get(), 'Gender': Gender.get(),
+                                                           'Course': Course.get(),
+                                                           'Year Level': YearLevel.get()}
+                            self.saveData()
+                            tkinter.messagebox.showinfo("SIS", "Student Recorded Successfully")
+                    else:
+                        tkinter.messagebox.showerror("Student Information System", "Invalid ID")
                 #Clear()
                 displayStudent()
 
@@ -82,15 +96,30 @@ class student:
             Course.set("")
             
         def searchStudent():
-            if self.Search.get() in self.data:
-                vals = list(self.data[self.Search.get()].values())
-                tree.delete(*tree.get_children())
-                tree.insert("", 0, values=(self.Search.get(), vals[0], vals[1], vals[2], vals[3]))
+            self.Search.get()
+            search=[]
+            for i in  self.Search.get():
+                search.append(i)
+            if "-" in search:
+                searchsplitted = self.Search.get().split("-")
+                y= searchsplitted[0]
+                n = searchsplitted[1]
+                if y.isdigit()==False or n.isdigit()==False:
+                    tkinter.messagebox.showerror("Student Information System", "Invalid ID")
+                else:
+                    if self.Search.get() in self.data:
+                        vals = list(self.data[self.Search.get()].values())
+                        tree.delete(*tree.get_children())
+                        tree.insert("", 0, values=(self.Search.get(), vals[0], vals[1], vals[2], vals[3]))
+                    elif self.Search.get() == "":
+                        displayStudent()
+                    else:
+                        tkinter.messagebox.showerror("SIS", "Student not found.")
+                        return
             elif self.Search.get() == "":
-                displayStudent()
+                tkinter.messagebox.showerror("SIS", "Student not found.")
             else:
                 tkinter.messagebox.showerror("SIS", "Student not found.")
-                return
             
         def editStudent():
             if tree.focus() == "":
@@ -113,7 +142,7 @@ class student:
                                                    'Course': Course.get(),
                                                    'Year Level': YearLevel.get()}
                     self.saveData()
-                    tkinter.messagebox.showinfo("SIS", "Student Recorded Successfully")
+                    tkinter.messagebox.showinfo("SIS", "Student Updated Successfully")
                 Clear()
                 displayStudent()   
         #==============================frame
@@ -231,7 +260,7 @@ class student:
 if __name__=='__main__':
     root = Tk()
     application = student(root) 
-    root.mainloop()       
+    root.mainloop()    
         
         
         
